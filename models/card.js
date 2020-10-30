@@ -1,9 +1,6 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model, Types } = require('mongoose');
 
 const userSchema = new Schema({
-  _id: {
-    type: String,
-  },
   name: {
     type: String,
     required: true,
@@ -21,7 +18,7 @@ const userSchema = new Schema({
     required: true,
     validate: {
       validator(v) {
-        return /^https?:\/\/[\w*-\?\.\/]*\/?$/i.test(v);
+        return /^https?:\/\/[\w*-?./]*\/?$/i.test(v);
       },
       message: 'Вы ввели некорректный URL',
     },
@@ -29,9 +26,6 @@ const userSchema = new Schema({
 });
 
 const cardSchema = new Schema({
-  _id: {
-    type: String,
-  },
   name: {
     type: String,
     minlength: 2,
@@ -45,7 +39,7 @@ const cardSchema = new Schema({
     required: true,
     validate: {
       validator(v) {
-        return /^https?:\/\/[\w*-\?\.\/]*\/?$/i.test(v);
+        return /^https?:\/\/[\w*-?./]*\/?$/i.test(v);
       },
       message: 'Вы ввели некорректный URL',
     },
@@ -53,7 +47,7 @@ const cardSchema = new Schema({
   owner: userSchema,
   likes: [
     {
-      type: userSchema,
+      type: Types.ObjectId,
       default: [],
     },
   ],

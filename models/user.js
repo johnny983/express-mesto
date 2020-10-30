@@ -1,9 +1,6 @@
 const { Schema, model } = require('mongoose');
 
 const userSchema = new Schema({
-  _id: {
-    type: String,
-  },
   name: {
     type: String,
     required: true,
@@ -21,7 +18,7 @@ const userSchema = new Schema({
     required: true,
     validate: {
       validator(v) {
-        return /^https?:\/\/[\w*-\?\.\/]*\/?$/i.test(v);
+        return /^https?:\/\/[\w*-?./]*\/?$/i.test(v);
       },
       message: 'Вы ввели некорректный URL',
     },

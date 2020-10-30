@@ -1,16 +1,53 @@
 const Card = require('../models/card');
 
+const putCardLike = async (req, res) => {
+  try {
+    const card = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+      { new: true },
+    );
+    if (!card) {
+      return res.status(404).send(`Карточка ${req.params.cardId} не найдена`);
+    }
+    return res.status(200).send(`Лайк на "${card.name}" установлен`);
+  } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(403).send({ message: `Нет карточки id = ${req.params.cardId}` });
+    }
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const removeCardLike = async (req, res) => {
+  try {
+    const card = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $pull: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+      { new: true },
+    );
+    if (!card) {
+      return res.status(404).send(`Карточка ${req.params.cardId} не найдена`);
+    }
+    return res.status(200).send(`Лайк на "${card.name}" удален`);
+  } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(403).send({ message: `Нет карточки id = ${req.params.cardId}` });
+    }
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 const createCard = async (req, res) => {
   const { name, link } = req.body;
-  const { _id } = req.user;
   try {
-    const newCard = await Card.create({ _id, name, link });
+    const newCard = await Card.create({ name, link });
     return res.status(200).send(newCard);
   } catch (error) {
     if (error.name === 'ValidationError') {
-      return res.status(400).send(error.message);
+      return res.status(400).send({ message: error.message });
     }
-    return res.status(500).send(error);
+    return res.status(500).send({ message: error.message });
   }
 };
 
@@ -18,21 +55,28 @@ const deleteCard = async (req, res) => {
   try {
     const card = await Card.findByIdAndRemove(req.params.cardId);
     if (!card) {
-      res.status(404).send(`Карточка для удаления ${req.params.cardId} не найдена`);
+      return res.status(404).send(`Карточка для удаления ${req.params.cardId} не найдена`);
     }
-    res.status(200).send(`Карточка "${card.name}" была удалена вами`);
+    return res.status(200).send(`Карточка "${card.name}" была удалена вами`);
   } catch (error) {
-    res.status(500).json({ message: error });
+    if (error.name === 'CastError') {
+      return res.status(403).send({ message: `Нет карточки id = ${req.params.cardId}` });
+    }
+    return res.status(500).json({ message: error.message });
   }
 };
 
 const getCards = async (req, res) => {
   try {
     const cards = await Card.find({});
-    res.status(200).send(cards);
+    if (cards.length === 0) {
+      res.status(404).send('Карточки не добавлены');
+    } else {
+      res.status(200).send(cards);
+    }
   } catch (error) {
-    res.status(500).json({ message: error });
+    res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = { createCard, deleteCard, getCards };
+module.exports = { createCard, deleteCard, getCards, putCardLike, removeCardLike };
