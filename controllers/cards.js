@@ -8,14 +8,14 @@ const putCardLike = async (req, res) => {
       { new: true },
     );
     if (!card) {
-      return res.status(404).send(`Карточка ${req.params.cardId} не найдена`);
+      return res.status(404).send({ message: `Карточка ${req.params.cardId} не найдена` });
     }
-    return res.status(200).send(`Лайк на "${card.name}" установлен`);
+    return res.status(200).send({ message: `Лайк на "${card.name}" установлен` });
   } catch (error) {
     if (error.name === 'CastError') {
-      return res.status(403).send({ message: `Нет карточки id = ${req.params.cardId}` });
+      return res.status(400).send({ message: `Нет карточки id = ${req.params.cardId}` });
     }
-    return res.status(500).json({ message: error.message });
+    return res.status(500).send({ message: error.message });
   }
 };
 
@@ -27,14 +27,14 @@ const removeCardLike = async (req, res) => {
       { new: true },
     );
     if (!card) {
-      return res.status(404).send(`Карточка ${req.params.cardId} не найдена`);
+      return res.status(404).send({ message: `Карточка ${req.params.cardId} не найдена` });
     }
-    return res.status(200).send(`Лайк на "${card.name}" удален`);
+    return res.status(200).send({ message: `Лайк на "${card.name}" удален` });
   } catch (error) {
     if (error.name === 'CastError') {
       return res.status(403).send({ message: `Нет карточки id = ${req.params.cardId}` });
     }
-    return res.status(500).json({ message: error.message });
+    return res.status(500).send({ message: error.message });
   }
 };
 
@@ -55,14 +55,14 @@ const deleteCard = async (req, res) => {
   try {
     const card = await Card.findByIdAndRemove(req.params.cardId);
     if (!card) {
-      return res.status(404).send(`Карточка для удаления ${req.params.cardId} не найдена`);
+      return res.status(404).send({ message: `Карточка для удаления ${req.params.cardId} не найдена` });
     }
-    return res.status(200).send(`Карточка "${card.name}" была удалена вами`);
+    return res.status(200).send({ message: `Карточка "${card.name}" была удалена вами` });
   } catch (error) {
     if (error.name === 'CastError') {
       return res.status(403).send({ message: `Нет карточки id = ${req.params.cardId}` });
     }
-    return res.status(500).json({ message: error.message });
+    return res.status(500).send({ message: error.message });
   }
 };
 
@@ -70,13 +70,15 @@ const getCards = async (req, res) => {
   try {
     const cards = await Card.find({});
     if (cards.length === 0) {
-      res.status(404).send('Карточки не добавлены');
+      res.status(404).send({ message: 'Карточки не добавлены' });
     } else {
       res.status(200).send(cards);
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).send({ message: error.message });
   }
 };
 
-module.exports = { createCard, deleteCard, getCards, putCardLike, removeCardLike };
+module.exports = {
+  createCard, deleteCard, getCards, putCardLike, removeCardLike,
+};

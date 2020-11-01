@@ -40,7 +40,7 @@ const getUsers = async (req, res) => {
   try {
     const users = await User.find({});
     if (users.length === 0) {
-      res.status(404).send('Не создано ни одного пользователя');
+      res.status(404).send({ message: 'Не создано ни одного пользователя' });
     } else {
       res.status(200).send(users);
     }
@@ -53,14 +53,14 @@ const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
-      return res.status(404).send('Нет пользователя с таким id');
+      return res.status(404).send({ message: 'Нет пользователя с таким id' });
     }
     return res.status(200).send(user);
   } catch (error) {
     if (error.name === 'CastError') {
-      return res.status(403).send({ message: `Нет пользователя id = ${req.params.id}` });
+      return res.status(400).send({ message: `Нет пользователя id = ${req.params.id}` });
     }
-    return res.status(404).send({ message: error.message });
+    return res.status(500).send({ message: error.message });
   }
 };
 
