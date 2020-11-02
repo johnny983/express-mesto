@@ -34,7 +34,7 @@ app.use('/cards', cardsRoutes);
 app.use('/users', usersRoutes);
 
 app.all('*', (req, res) => {
-  res.status(500).send({ message: 'Запрашиваемый ресурс не найден' });
+  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 });
 
 app.listen(PORT, () => {

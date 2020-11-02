@@ -32,7 +32,7 @@ const removeCardLike = async (req, res) => {
     return res.status(200).send({ message: `Лайк на "${card.name}" удален` });
   } catch (error) {
     if (error.name === 'CastError') {
-      return res.status(403).send({ message: `Нет карточки id = ${req.params.cardId}` });
+      return res.status(400).send({ message: `Нет карточки id = ${req.params.cardId}` });
     }
     return res.status(500).send({ message: error.message });
   }
@@ -60,7 +60,7 @@ const deleteCard = async (req, res) => {
     return res.status(200).send({ message: `Карточка "${card.name}" была удалена вами` });
   } catch (error) {
     if (error.name === 'CastError') {
-      return res.status(403).send({ message: `Нет карточки id = ${req.params.cardId}` });
+      return res.status(400).send({ message: `Нет карточки id = ${req.params.cardId}` });
     }
     return res.status(500).send({ message: error.message });
   }
