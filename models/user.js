@@ -23,6 +23,12 @@ const userSchema = new Schema({
       message: 'Вы ввели некорректный URL',
     },
   },
+  email: {
+    type: String,
+    required: true,
+    minlength: 7,
+    unique: true,
+  },
 });
 
 module.exports = model('user', userSchema);
